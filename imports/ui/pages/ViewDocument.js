@@ -41,7 +41,7 @@ const ViewDocument = ({ doc }) => {
       </div>
       { doc && doc.body }
       <br/> <br/>
-      <GDCalender selectable={true} editable={false}/>
+      <GDCalender selectable={false} editable={false} doc={doc}/>
     </div>
   ) : <NotFound />;
 };

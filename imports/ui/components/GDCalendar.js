@@ -19,6 +19,7 @@ const styles = {
     }
 }
 
+/*
 let tmpEvents = [
     {
         'title': 'All Day Event',
@@ -46,11 +47,15 @@ let tmpEvents = [
         'end': new Date(2017, 8, 20, 21, 0, 0)
     },
 ]
+*/
+
+let tmpEvents = [];
 
 class GDCalendar extends React.Component {
-
     constructor (props) {
         super(props);
+
+        tmpEvents = this.props.doc && this.props.doc.events ? this.props.doc.events : [];
         this.state = {
             events : tmpEvents
         }
@@ -59,6 +64,8 @@ class GDCalendar extends React.Component {
     }
 
     moveEvent({event, start, end}) {
+        if(!this.props.editable) return;
+
         const editable = this.props.editable;
         if (!editable) return;
         
@@ -74,10 +81,12 @@ class GDCalendar extends React.Component {
             events: nextEvents
         })
 
-        alert('${event.title} was dropped onto ${event.start}');
+        this.updateDocumentEvents();
     }
 
     onSelectTimes(slotInfo) {
+        if(!this.props.editable) return;
+
         let eventName = window.prompt('Please enter the event name', 'Event');
         if (eventName != null && eventName != "") {
             const eventInfo = {
@@ -89,10 +98,14 @@ class GDCalendar extends React.Component {
             this.setState({
                 events: tmpEvents
             });
+
+            this.updateDocumentEvents();
         }
     }
 
     onSelectSlot(event) {
+        if(!this.props.editable) return;
+
         let deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
 
         if (deleteConfirm == true) {
@@ -104,14 +117,24 @@ class GDCalendar extends React.Component {
             this.setState({
                 events: tmpEvents
             });
+
+            this.updateDocumentEvents();
         }
 
+    }
+
+    updateDocumentEvents() {
+        let newDoc = this.props.doc;
+        if (!newDoc) newDoc = [];
+        newDoc.events = this.state.events;
+
+        this.props.changeDoc(newDoc);
     }
 
     render() {
         return (
             <DragAndDropCalendar
-                selectable={this.props.selectable}
+                selectable={this.props.editable && this.props.selectable}
                 events={this.state.events}
                 defaultView='week'
                 // scrollToTime={new Date(1970, 1, 1, 6)}

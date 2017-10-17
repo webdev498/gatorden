@@ -12,6 +12,11 @@ export default class DocumentEditor extends React.Component {
     setTimeout(() => { document.querySelector('[name="title"]').focus(); }, 0);
   }
 
+  changeDocEvents(newDoc) {
+    this.props.doc = newDoc;
+    console.log('change doc events : ', this.props.doc);
+  }
+
   render() {
     const { doc } = this.props;
     return (<form
@@ -38,7 +43,7 @@ export default class DocumentEditor extends React.Component {
       </FormGroup>
       <FormGroup>
         <ControlLabel>Calendar</ControlLabel>
-        <GDCalender selectable={true} editable={true}/>
+        <GDCalender selectable={true} editable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
       </FormGroup>
       <Button type="submit" bsStyle="success">
         { doc && doc._id ? 'Save Changes' : 'Add Room Scheduler' }
