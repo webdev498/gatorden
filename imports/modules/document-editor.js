@@ -13,6 +13,7 @@ const handleUpsert = () => {
   const upsert = {
     title: document.querySelector('[name="title"]').value.trim(),
     body: document.querySelector('[name="body"]').value.trim(),
+    events: doc.events,
   };
 
   if (doc && doc._id) upsert._id = doc._id;
