@@ -26,6 +26,26 @@ Documents.schema = new SimpleSchema({
     type: String,
     label: 'The body of the document.',
   },
+  events: {
+    type: Array,
+    optional: true,
+  },
+  'events.$' : {
+    type: Object,
+  },
+  'events.$.title': {
+    type: String,
+  },
+  'events.$.allDay': {
+    type: Boolean,
+    optional: true,
+  },
+  'events.$.start': {
+    type: Date,
+  },
+  'events.$.end': {
+    type: Date,
+  }
 });
 
 Documents.attachSchema(Documents.schema);
