@@ -6,6 +6,7 @@ import moment from 'moment';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
 // import 'react-big-calendar/lib/addons/dropAndDrop/styles';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 BigCalendar.momentLocalizer(moment);
 
@@ -76,6 +77,37 @@ class GDCalendar extends React.Component {
         alert('${event.title} was dropped onto ${event.start}');
     }
 
+    onSelectTimes(slotInfo) {
+        let eventName = window.prompt('Please enter the event name', 'Event');
+        if (eventName != null && eventName != "") {
+            const eventInfo = {
+                'title': eventName,
+                'start': slotInfo.start,
+                'end': slotInfo.end,
+            }
+            tmpEvents.push(eventInfo);
+            this.setState({
+                events: tmpEvents
+            });
+        }
+    }
+
+    onSelectSlot(event) {
+        let deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
+
+        if (deleteConfirm == true) {
+            let newEvents = tmpEvents.filter(el => {
+                return el != event;
+            });
+
+            tmpEvents = newEvents;
+            this.setState({
+                events: tmpEvents
+            });
+        }
+
+    }
+
     render() {
         return (
             <DragAndDropCalendar
@@ -84,11 +116,8 @@ class GDCalendar extends React.Component {
                 defaultView='week'
                 // scrollToTime={new Date(1970, 1, 1, 6)}
                 onEventDrop={this.moveEvent}
-                onSelectEvent={event => alert(event.title)}
-                onSelectSlot={ (slotInfo) => alert(
-                    'selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ' +
-                    '\nend: ${slotInfo.end.toLocaleString()}'
-                )}
+                onSelectEvent={this.onSelectSlot.bind(this)}
+                onSelectSlot={this.onSelectTimes.bind(this)}
                 style={styles.calendarView}
             />
         )
