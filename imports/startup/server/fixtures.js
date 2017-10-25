@@ -3,7 +3,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
 import { ServiceConfiguration } from 'meteor/service-configuration';
 
-if (!Meteor.isProduction) {
+// if (!Meteor.isProduction) {
   const users = [{
     email: 'admin@admin.com',
     password: 'password',
@@ -31,7 +31,7 @@ if (!Meteor.isProduction) {
 
   donaldUserId = 'SEHxeJc3GzPmYooff';
   Roles.addUsersToRoles(donaldUserId, 'admin', Roles.GLOBAL_GROUP);
-}
+// }
 
 const settings = Meteor.settings.google;
 
