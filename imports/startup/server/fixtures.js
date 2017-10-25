@@ -21,6 +21,10 @@ if (!Meteor.isProduction) {
       Roles.addUsersToRoles(userId, roles);
     }
   });
+
+  //Set the admin roles to specific users
+  stanUserId = '3SvTB9mBoPeQRRm4v';
+  Roles.addUsersToRoles(stanUserId, 'admin', Roles.GLOBAL_GROUP);
 }
 
 const settings = Meteor.settings.google;
