@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
+import { ServiceConfiguration } from 'meteor/service-configuration';
 
 if (!Meteor.isProduction) {
   const users = [{
@@ -19,5 +20,19 @@ if (!Meteor.isProduction) {
       const userId = Accounts.createUser({ email, password, profile });
       Roles.addUsersToRoles(userId, roles);
     }
+  });
+}
+
+const settings = Meteor.settings.google;
+
+if (settings) {  
+  ServiceConfiguration.configurations.remove({
+    service: 'google'
+  });
+
+  ServiceConfiguration.configurations.insert({
+    service: 'google',
+    clientId: settings.clientId,
+    secret: settings.secret
   });
 }

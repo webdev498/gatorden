@@ -27,6 +27,28 @@ const login = () => {
   });
 };
 
+export function loginWithGoogle() {
+  console.log('asdfasdfadfs');
+  Meteor.loginWithGoogle({
+    requestPermissions: ['email', 'profile']
+  }, (err) => {
+    if (err) {
+      // handle error
+      Bert.alert(err, 'warning');
+    } else {
+      // successful login!
+      Bert.alert('Logged in!', 'success');
+
+      const { location } = component.props;
+      if (location.state && location.state.nextPathname) {
+        browserHistory.push(location.state.nextPathname);
+      } else {
+        browserHistory.push('/');
+      }
+    }
+  });
+};
+
 const validate = () => {
   $(component.loginForm).validate({
     rules: {
@@ -51,7 +73,7 @@ const validate = () => {
   });
 };
 
-export default function handleLogin(options) {
+export function handleLogin(options) {
   component = options.component;
   validate();
 }

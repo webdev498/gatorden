@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { Row, Col, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import handleLogin from '../../modules/login';
+import { handleLogin, loginWithGoogle }  from '../../modules/login';
+
+import { Meteor } from 'meteor/meteor';
 
 export default class Login extends React.Component {
   componentDidMount() {
@@ -10,6 +12,12 @@ export default class Login extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+  }
+
+  handleGoogleLogin() {
+    event.preventDefault();
+
+    loginWithGoogle();
   }
 
   render() {
@@ -46,6 +54,9 @@ export default class Login extends React.Component {
               </FormGroup>
               <Button type="submit" bsStyle="success">Login</Button>
             </form>
+            <div className="google-login-button" onClick={this.handleGoogleLogin}>
+              <img src="/google_login_btn.png"></img>
+            </div>
           </Col>
         </Row>
       </div>
