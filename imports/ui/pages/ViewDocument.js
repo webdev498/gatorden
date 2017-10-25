@@ -9,6 +9,7 @@ import { removeDocument } from '../../api/documents/methods';
 import NotFound from './NotFound';
 import container from '../../modules/container';
 import GDCalender from '../components/GDCalendar';
+import { Roles } from 'meteor/alanning:roles';
 
 const handleEdit = (_id) => {
   browserHistory.push(`/documents/${_id}/edit`);
@@ -32,12 +33,15 @@ const ViewDocument = ({ doc }) => {
     <div className="ViewDocument">
       <div className="page-header clearfix">
         <h4 className="pull-left">{ doc && doc.title }</h4>
-        <ButtonToolbar className="pull-right">
-          <ButtonGroup bsSize="small">
-            <Button onClick={ () => handleEdit(doc._id) }>Edit</Button>
-            <Button onClick={ () => handleRemove(doc._id) } className="text-danger">Delete</Button>
-          </ButtonGroup>
-        </ButtonToolbar>
+        {
+          Roles.userIsInRole(Meteor.userId(), ['admin'], Roles.GLOBAL_GROUP) &&
+          <ButtonToolbar className="pull-right">
+            <ButtonGroup bsSize="small">
+              <Button onClick={ () => handleEdit(doc._id) }>Edit</Button>
+              <Button onClick={ () => handleRemove(doc._id) } className="text-danger">Delete</Button>
+            </ButtonGroup>
+          </ButtonToolbar>
+        }
       </div>
       { doc && doc.body }
       <br/> <br/>
