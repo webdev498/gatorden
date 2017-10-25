@@ -25,6 +25,9 @@ if (!Meteor.isProduction) {
   //Set the admin roles to specific users
   stanUserId = '3SvTB9mBoPeQRRm4v';
   Roles.addUsersToRoles(stanUserId, 'admin', Roles.GLOBAL_GROUP);
+
+  danaUserId = 'p7cGmgdMq2z47ypTB';
+  Roles.addUsersToRoles(danaUserId, 'admin', Roles.GLOBAL_GROUP);
 }
 
 const settings = Meteor.settings.google;
