@@ -23,30 +23,3 @@ emailTemplates.resetPassword = {
     ${email}.`;
   },
 };
-
-Accounts.onCreateUser((options, user) => {
-  if (! user.services.google) {
-    return user;
-  }
-
-  const { family_name, given_name, email } = user.services.google;
-  user.profile = {
-    name: {
-      first: given_name,
-      last: family_name
-    }
-  }
-  // user.profile.name.first = given_name[0];
-  // user.profile.name.last = family_name[0];
-  user.emails = [{ address: email, verified: true}];
-  // user.initials = first_name[0].toUpperCase() + last_name[0].toUpperCase();
-  // We still want the default hook's 'profile' behavior.
-  // if (options.profile) {
-  //   user.profile = options.profile;
-  // }
-  
-  // Don't forget to return the new user object at the end!
-  return user;
-
-  return user;
-});
