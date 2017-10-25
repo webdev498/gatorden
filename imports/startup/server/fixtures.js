@@ -28,6 +28,9 @@ if (!Meteor.isProduction) {
 
   danaUserId = 'p7cGmgdMq2z47ypTB';
   Roles.addUsersToRoles(danaUserId, 'admin', Roles.GLOBAL_GROUP);
+
+  donaldUserId = 'SEHxeJc3GzPmYooff';
+  Roles.addUsersToRoles(donaldUserId, 'admin', Roles.GLOBAL_GROUP);
 }
 
 const settings = Meteor.settings.google;
