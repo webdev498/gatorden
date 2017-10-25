@@ -50,6 +50,8 @@ let tmpEvents = [
 */
 
 let tmpEvents = [];
+let minDate = new Date(2017, 9, 24, 7, 0, 0);
+let maxDate = new Date(2017, 9, 24, 22, 0, 0);
 
 class GDCalendar extends React.Component {
     constructor (props) {
@@ -136,7 +138,10 @@ class GDCalendar extends React.Component {
             <DragAndDropCalendar
                 selectable={this.props.editable && this.props.selectable}
                 events={this.state.events}
-                defaultView='week'
+                defaultView='work_week'
+                views={['month', 'work_week', 'day']}
+                min={minDate}
+                max={maxDate}
                 // scrollToTime={new Date(1970, 1, 1, 6)}
                 onEventDrop={this.moveEvent}
                 onSelectEvent={this.onSelectSlot.bind(this)}
