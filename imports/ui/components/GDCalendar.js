@@ -139,7 +139,7 @@ class GDCalendar extends React.Component {
                 selectable={this.props.editable && this.props.selectable}
                 events={this.state.events}
                 defaultView='work_week'
-                views={['month', 'work_week', 'day']}
+                views={['work_week']}
                 min={minDate}
                 max={maxDate}
                 // scrollToTime={new Date(1970, 1, 1, 6)}
