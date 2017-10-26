@@ -140,6 +140,7 @@ class GDCalendar extends React.Component {
                 events={this.state.events}
                 defaultView='work_week'
                 views={['work_week']}
+                step={5}
                 min={minDate}
                 max={maxDate}
                 // scrollToTime={new Date(1970, 1, 1, 6)}
