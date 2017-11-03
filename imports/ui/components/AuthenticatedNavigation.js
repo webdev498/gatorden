@@ -18,6 +18,14 @@ const AuthenticatedNavigation = () => (
       <LinkContainer to="/documents">
         <NavItem eventKey={ 2 } href="/documents">Room Scheduler</NavItem>
       </LinkContainer>
+
+      <LinkContainer to="/users">
+        <NavItem eventKey={ 4 } href="/users">Users</NavItem>
+      </LinkContainer>
+
+      <LinkContainer to="/upload">
+        <NavItem eventKey={ 4 } href="/documents">Upload</NavItem>
+      </LinkContainer>
     </Nav>
     <Nav pullRight>
       <NavDropdown eventKey={ 3 } title={ userName() } id="basic-nav-dropdown">

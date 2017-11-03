@@ -8,3 +8,4 @@ Meteor.publish('documents.view', (_id) => {
   check(_id, String);
   return Documents.find(_id);
 });
+

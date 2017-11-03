@@ -53,6 +53,25 @@ let tmpEvents = [];
 let minDate = new Date(2017, 9, 24, 7, 0, 0);
 let maxDate = new Date(2017, 9, 24, 22, 0, 0);
 
+class WeekHeader extends React.Component {
+    render() {
+        let eventDate = this.props.date;
+
+        let year = eventDate.getFullYear();
+        let date = eventDate.getDate();
+        let month = eventDate.getMonth();
+        let day = eventDate.getDay();
+        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        return  <span>
+                    <em style={{ marginTop: 10 }}>{days[day]}</em>
+                    <br/>
+                    <p>{ month + '/' + date + ', ' + year }</p>
+                    <em style={{ color: 'magenta'}}>A</em>
+                </span>
+    }
+}
+
 class GDCalendar extends React.Component {
     constructor (props) {
         super(props);
@@ -139,15 +158,22 @@ class GDCalendar extends React.Component {
                 selectable={this.props.editable && this.props.selectable}
                 events={this.state.events}
                 defaultView='work_week'
-                views={['work_week']}
+                views={['month', 'work_week']}
                 step={5}
                 min={minDate}
                 max={maxDate}
+                allDayAccessor={'All Day'}
+                // formats={{dayFormat: 'dddd, MMM D, YYYY'}}
                 // scrollToTime={new Date(1970, 1, 1, 6)}
                 onEventDrop={this.moveEvent}
                 onSelectEvent={this.onSelectSlot.bind(this)}
                 onSelectSlot={this.onSelectTimes.bind(this)}
                 style={styles.calendarView}
+                components={{
+                    work_week: {
+                      header: WeekHeader
+                    }
+                }}
             />
         )
     }
