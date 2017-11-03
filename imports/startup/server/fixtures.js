@@ -12,7 +12,7 @@ import _ from 'lodash';
     profile: {
       name: { first: 'Dana', last: 'Feldman' },
     },
-    roles: ['admin'],
+    roles: ['superadmin'],
   }];
 
   users.forEach(({ email, password, profile, roles }) => {
@@ -20,20 +20,19 @@ import _ from 'lodash';
 
     if (!userExists) {
       const userId = Accounts.createUser({ email, password, profile });
-      Roles.addUsersToRoles(userId, roles[0], Roles.GLOBAL_GROUP);
+      Roles.addUsersToRoles(userId, roles, Roles.GLOBAL_GROUP);
     }
   });
 
-  //Add Dana as a super admin
+  //Add Dana Feldman as a super admin and make them active
   const usersExists = Meteor.users.find({ profile: {
-                                                          name: { first: 'Dana', last: 'Feldman' },
-                                                      } 
-                                          }).fetch();
+                                            name: { first: 'Dana', last: 'Feldman' },
+                                          }
+                                        }).fetch();
   if (usersExists) {
-    userIds = _.map(usersExists, '_id');
-    
-    userIds.forEach((userId) => {
-      Roles.setUserRoles(userId, 'superadmin', Roles.GLOBAL_GROUP);
+    usersExists.forEach((user) => {
+      Meteor.users.update({_id : user._id}, { $set: { active: 'Yes' } });
+      Roles.setUserRoles(user._id, 'superadmin', Roles.GLOBAL_GROUP);
     });
     
   }
