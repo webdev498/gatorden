@@ -7,6 +7,7 @@ import { Meteor } from 'meteor/meteor';
 import Workdays from '../../api/workdays/workdays';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { OverlayTrigger, Popover, Button } from 'react-bootstrap';
 
 BigCalendar.momentLocalizer(moment);
 
@@ -79,6 +80,32 @@ class WeekHeader extends React.Component {
                 </span>
     }
 }
+
+const popoverHoverFocus = (title, startDate, endDate) => (
+    <Popover id="popover-trigger-hover-focus">
+      Event : <strong>{title}</strong>
+      <br />
+      { moment(startDate).format('ddd MMM DD YYYY') }
+      <br />
+      Start : { moment(startDate).format('h:mm:ss A') }
+      <br />
+      End : { moment(endDate).format('h:mm:ss A') }
+    </Popover>
+  );
+
+class MyEvent extends React.Component {
+    render() {
+
+        const { event } = this.props;
+        return <OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={popoverHoverFocus(event.title, event.start, event.end)}>
+                    <span style={ {display: 'block', width: '100%', height: '100%'} }>
+                        <em style={{ color: 'black'}}>{event.title}</em>
+                    </span>
+               </OverlayTrigger>;
+    }
+
+}
+
 
 class GDCalendar extends React.Component {
     constructor (props) {
@@ -178,6 +205,7 @@ class GDCalendar extends React.Component {
                 onSelectSlot={this.onSelectTimes.bind(this)}
                 style={styles.calendarView}
                 components={{
+                    event: MyEvent,
                     work_week: {
                       header: WeekHeader
                     }
