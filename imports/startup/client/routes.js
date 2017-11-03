@@ -16,6 +16,7 @@ import NotFound from '../../ui/pages/NotFound.js';
 import RecoverPassword from '../../ui/pages/RecoverPassword.js';
 import ResetPassword from '../../ui/pages/ResetPassword.js';
 import Signup from '../../ui/pages/Signup.js';
+import UploadFile from '../../ui/pages/UploadFile.js';
 
 const authenticate = (nextState, replace) => {
   if (!Meteor.loggingIn() && !Meteor.userId()) {
@@ -36,9 +37,9 @@ Meteor.startup(() => {
         <Route name="editDocument" path="/documents/:_id/edit" component={ EditDocument } onEnter={ authenticate } />
         <Route name="viewDocument" path="/documents/:_id" component={ ViewDocument } onEnter={ authenticate } />
 
-        <Route name="documents" path="/users" component={ Users } onEnter={ authenticate } />
-        <Route name="editDocument" path="/users/:_id/edit" component={ EditDocument } onEnter={ authenticate } />
-        <Route name="viewDocument" path="/users/:_id" component={ ViewDocument } onEnter={ authenticate } />
+        <Route name="users" path="/users" component={ Users } onEnter={ authenticate } />
+
+        <Route name="upload" path="/upload" component={ UploadFile } onEnter={ authenticate } />
 
         <Route name="login" path="/login" component={ Login } />
         <Route name="recover-password" path="/recover-password" component={ RecoverPassword } />
