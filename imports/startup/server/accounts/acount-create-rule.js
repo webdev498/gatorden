@@ -1,8 +1,11 @@
 import { Accounts } from 'meteor/accounts-base';
 
 Accounts.onCreateUser((options, user) => {
-  console.log('User and Options :', user, options);
+
     user.active = 'No';
+    user.roles = { "__global_roles__" : [ 
+      "normal"
+    ] };
 
     if (options.profile) {
       user.profile = options.profile;
