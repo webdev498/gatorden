@@ -1,7 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router';
 import { Radio, Row, Col, FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import handleSignup from '../../modules/signup';
+import handleUpload from '../../modules/uploadfile';
 
 
 function FieldGroup({ id, label, help, ...props }) {
@@ -16,7 +15,7 @@ function FieldGroup({ id, label, help, ...props }) {
 
 export default class UploadFile extends React.Component {
   componentDidMount() {
-    // handleSignup({ component: this });
+    handleUpload({ component: this });
   }
 
   handleSubmit(event) {
@@ -30,7 +29,7 @@ export default class UploadFile extends React.Component {
           <Col xs={ 12 } sm={ 6 } md={ 6 }>
             <h4 className="page-header">Upload CSV File</h4>
             <form
-              ref={ form => (this.signupForm = form) }
+              ref={ form => (this.uploadFileForm = form) }
               onSubmit={ this.handleSubmit }
             >
               <Row>
@@ -41,10 +40,10 @@ export default class UploadFile extends React.Component {
                 </Col>
                 <Col xs={ 6 } sm={ 6 }>
                   <FormGroup>
-                    <Radio name="radioCSVFormatGroup">
+                    <Radio name="radioCSVFormatGroup" id="radioFormatHeader" value="0" defaultChecked>
                         Calendar Header(A Day, B Day ..)
                     </Radio>
-                    <Radio name="radioCSVFormatGroup">
+                    <Radio name="radioCSVFormatGroup" id="radioFormatEvent" value="1">
                         Scheduling Dates
                     </Radio>
                   </FormGroup>
@@ -55,6 +54,7 @@ export default class UploadFile extends React.Component {
                 <Col xs={ 12 } sm={ 12 }>
                     <FieldGroup
                         id="csvControlFile"
+                        name="csvControlFile"
                         type="file"
                         label="Upload File"
                     />
