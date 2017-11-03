@@ -20,7 +20,7 @@ import _ from 'lodash';
 
     if (!userExists) {
       const userId = Accounts.createUser({ email, password, profile });
-      Roles.addUsersToRoles(userId, roles, Roles.GLOBAL_GROUP);
+      Roles.addUsersToRoles(userId, roles[0], Roles.GLOBAL_GROUP);
     }
   });
 
