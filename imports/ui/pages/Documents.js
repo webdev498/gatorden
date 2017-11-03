@@ -15,7 +15,7 @@ const Documents = () => (
         <div className="page-header clearfix">
           <h4 className="pull-left">List of Rooms</h4>
           {
-            Roles.userIsInRole(Meteor.userId(), ['admin'], Roles.GLOBAL_GROUP) &&
+            Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin'], Roles.GLOBAL_GROUP) &&
             <Link to="/documents/new">
               <Button
                 bsStyle="success"

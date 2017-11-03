@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
 import { ServiceConfiguration } from 'meteor/service-configuration';
+import _ from 'lodash';
 
 //------------------------------------
 // if (!Meteor.isProduction) {
@@ -23,7 +24,24 @@ import { ServiceConfiguration } from 'meteor/service-configuration';
     }
   });
 
+  //Add Dana as a super admin
+  const usersExists = Meteor.users.find({ profile: {
+                                                          name: { first: 'Dana', last: 'Feldman' },
+                                                      } 
+                                          }).fetch();
+  if (usersExists) {
+    userIds = _.map(usersExists, '_id');
+    
+    userIds.forEach((userId) => {
+      Roles.setUserRoles(userId, 'superadmin', Roles.GLOBAL_GROUP);
+    });
+    
+  }
+
   //Set the admin roles to specific users
+  guofengUserId = 'tL93fYWkFfFrukgZR';
+  Roles.setUserRoles(guofengUserId, 'superadmin', Roles.GLOBAL_GROUP);
+
   stanUserId = '3SvTB9mBoPeQRRm4v';
   Roles.addUsersToRoles(stanUserId, 'admin', Roles.GLOBAL_GROUP);
 

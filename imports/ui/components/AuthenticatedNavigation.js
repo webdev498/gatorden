@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 
 const handleLogout = () => Meteor.logout(() => browserHistory.push('/login'));
 
@@ -19,13 +20,20 @@ const AuthenticatedNavigation = () => (
         <NavItem eventKey={ 2 } href="/documents">Room Scheduler</NavItem>
       </LinkContainer>
 
-      <LinkContainer to="/users">
-        <NavItem eventKey={ 4 } href="/users">Users</NavItem>
-      </LinkContainer>
+      {
+        Roles.userIsInRole(Meteor.userId(), ['superadmin'], Roles.GLOBAL_GROUP) &&
+        <LinkContainer to="/users">
+          <NavItem eventKey={ 4 } href="/users">Users</NavItem>
+        </LinkContainer>
+      }
 
-      <LinkContainer to="/upload">
-        <NavItem eventKey={ 4 } href="/documents">Upload</NavItem>
-      </LinkContainer>
+      {
+        Roles.userIsInRole(Meteor.userId(), ['superadmin'], Roles.GLOBAL_GROUP) &&
+        <LinkContainer to="/upload">
+          <NavItem eventKey={ 4 } href="/documents">Upload</NavItem>
+        </LinkContainer>
+      }
+      
     </Nav>
     <Nav pullRight>
       <NavDropdown eventKey={ 3 } title={ userName() } id="basic-nav-dropdown">

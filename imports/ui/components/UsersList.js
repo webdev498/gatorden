@@ -15,7 +15,7 @@ const indexN = (cell, row, enumObject, index) => (
 
 const renderCustom = (cell, row, extra) => {  
   const value = _.get(row, extra.path);
-  
+
   if (extra.path == 'roles.__global_roles__[0]') {
     return cell? cell : value;
   }
@@ -83,6 +83,10 @@ export default container((props, onData) => {
   const subscription = Meteor.subscribe('users.list');
   if (subscription.ready()) {
     const users = Users.find().fetch();
-    onData(null, { users });
+    var filteredUsers = _.filter(users, function(user) {
+      const role = user.roles.__global_roles__[0];
+      return role && role != 'superadmin';
+    });
+    onData(null, { users: filteredUsers });
   }
 }, UsersList);

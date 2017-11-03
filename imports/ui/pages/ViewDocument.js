@@ -34,7 +34,7 @@ const ViewDocument = ({ doc }) => {
       <div className="page-header clearfix">
         <h4 className="pull-left">{ doc && doc.title }</h4>
         {
-          Roles.userIsInRole(Meteor.userId(), ['admin'], Roles.GLOBAL_GROUP) &&
+          Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin'], Roles.GLOBAL_GROUP) &&
           <ButtonToolbar className="pull-right">
             <ButtonGroup bsSize="small">
               <Button onClick={ () => handleEdit(doc._id) }>Edit</Button>
