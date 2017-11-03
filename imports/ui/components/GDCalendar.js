@@ -3,9 +3,9 @@ import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
+import { Meteor } from 'meteor/meteor';
+import Workdays from '../../api/workdays/workdays';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
-
-// import 'react-big-calendar/lib/addons/dropAndDrop/styles';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 BigCalendar.momentLocalizer(moment);
@@ -52,22 +52,30 @@ let tmpEvents = [
 let tmpEvents = [];
 let minDate = new Date(2017, 9, 24, 7, 0, 0);
 let maxDate = new Date(2017, 9, 24, 22, 0, 0);
+const subscription = Meteor.subscribe('workdays.list');
 
 class WeekHeader extends React.Component {
     render() {
         let eventDate = this.props.date;
 
-        let year = eventDate.getFullYear();
-        let date = eventDate.getDate();
-        let month = eventDate.getMonth();
-        let day = eventDate.getDay();
-        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dateString = moment(eventDate).format('MMM D, YYYY');
+        const day = moment(eventDate).format('dddd');
+
+        let letterDay = ' ';
+        const letterDateString = moment(eventDate).format('YYYY-MM-DD');
+
+        if (subscription.ready()) {
+          const workdays = Workdays.find({dates : letterDateString}).fetch();
+          if (workdays.length > 0) {
+              letterDay = workdays[0].alphabet;
+          }         
+        }
 
         return  <span>
-                    <em style={{ marginTop: 10 }}>{days[day]}</em>
+                    <em style={{ marginTop: 10 }}>{day}</em>
                     <br/>
-                    <p>{ month + '/' + date + ', ' + year }</p>
-                    <em style={{ color: 'magenta'}}>A</em>
+                    <p>{ dateString }</p>
+                    <em style={{ color: 'magenta'}}>{letterDay}</em>
                 </span>
     }
 }

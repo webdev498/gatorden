@@ -1,8 +1,7 @@
 /* eslint-disable no-undef */
 
-import { browserHistory } from 'react-router';
-import { Accounts } from 'meteor/accounts-base';
 import { Bert } from 'meteor/themeteorchef:bert';
+import { upsertWorkday } from '../api/workdays/methods';
 import './validation.js';
 
 let component;
@@ -17,13 +16,39 @@ const upload = () => {
           reader.onload = function (e) {
               var rows = e.target.result.split("\n");
               for (var i = 0; i < rows.length; i++) {
-                console.log('file content -----------', rows[i]);
-                 var cells = rows[i].split(",");
-                for (var j = 0; j < cells.length; j++) {
+                var cells = rows[i].split(",");
+                if (CSVFormat == 0) { // Letter day
+                    if (cells.length != 4) {
+                        component.uploadFileForm.reset();
+                        Bert.alert('CSV format is not working for letter days', 'danger');
+                        return;
+                    }
 
+                    var date = cells[1];
+                    var letter = cells[2];
+                    var daytype = cells[3];
+
+                    if (date && letter) {
+                        daytype = daytype ? daytype : '';
+                        const workday = {
+                            dates : date.trim(),
+                            alphabet: letter,
+                            daytype: daytype
+                        };
+                        
+                        upsertWorkday.call(workday);
+                    }
                 }
-
+                else {
+                    component.uploadFileForm.reset();
+                    Bert.alert('CSV format is invalid', 'danger');
+                    return;
+                }
               }
+
+              const CSVTitle = CSVFormat == 0 ? 'Letter days' : 'Events';
+              Bert.alert('Successfully imported the CSV for ' + CSVTitle, 'success');
+              component.uploadFileForm.reset();
           }
           reader.readAsText($("#csvControlFile")[0].files[0]);
       } else {
