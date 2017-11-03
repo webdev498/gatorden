@@ -12,7 +12,6 @@ const login = () => {
   const password = document.querySelector('[name="password"]').value;
 
   Meteor.loginWithPassword(email, password, (error) => {
-    console.log('loginwithpassword', error);
     if (error) {
       Bert.alert(error.reason, 'warning');
     } else {
@@ -29,7 +28,6 @@ const login = () => {
 };
 
 export function loginWithGoogle() {
-  console.log('asdfasdfadfs');
   Meteor.loginWithGoogle({
     requestPermissions: ['email', 'profile']
   }, (err) => {
