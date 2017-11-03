@@ -3,12 +3,13 @@ import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
 import { ServiceConfiguration } from 'meteor/service-configuration';
 
+//------------------------------------
 // if (!Meteor.isProduction) {
   const users = [{
     email: 'admin@admin.com',
     password: 'password',
     profile: {
-      name: { first: 'Carl', last: 'Winslow' },
+      name: { first: 'Dana', last: 'Feldman' },
     },
     roles: ['admin'],
   }];
@@ -18,7 +19,7 @@ import { ServiceConfiguration } from 'meteor/service-configuration';
 
     if (!userExists) {
       const userId = Accounts.createUser({ email, password, profile });
-      Roles.addUsersToRoles(userId, roles);
+      Roles.addUsersToRoles(userId, roles[0], Roles.GLOBAL_GROUP);
     }
   });
 
@@ -33,6 +34,7 @@ import { ServiceConfiguration } from 'meteor/service-configuration';
   Roles.addUsersToRoles(donaldUserId, 'admin', Roles.GLOBAL_GROUP);
 // }
 
+//Setting for google login-----------------------------
 const settings = Meteor.settings.google;
 
 if (settings) {  
