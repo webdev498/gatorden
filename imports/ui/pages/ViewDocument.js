@@ -21,7 +21,7 @@ const handleRemove = (_id) => {
       if (error) {
         Bert.alert(error.reason, 'danger');
       } else {
-        Bert.alert('Document deleted!', 'success');
+        Bert.alert('Schedule deleted!', 'success');
         browserHistory.push('/documents');
       }
     });

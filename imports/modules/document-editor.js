@@ -9,7 +9,7 @@ let component;
 
 const handleUpsert = () => {
   const { doc } = component.props;
-  const confirmation = doc && doc._id ? 'Document updated!' : 'Document added!';
+  const confirmation = doc && doc._id ? 'Schedule updated!' : 'Schedule added!';
   const upsert = {
     title: document.querySelector('[name="title"]').value.trim(),
     body: document.querySelector('[name="body"]').value.trim(),

@@ -72,6 +72,7 @@
     "lodash": "^4.17.4",
     "meteor-node-stubs": "^0.2.6",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.14",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
     "react-addons-pure-render-mixin": "^15.5.2",

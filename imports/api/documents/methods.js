@@ -42,11 +42,11 @@ export const removeDocument = new ValidatedMethod({
   },
 });
 
-rateLimit({
-  methods: [
-    upsertDocument,
-    removeDocument,
-  ],
-  limit: 5,
-  timeRange: 1000,
-});
+// rateLimit({
+//   methods: [
+//     upsertDocument,
+//     removeDocument,
+//   ],
+//   limit: 5,
+//   timeRange: 1000,
+// });
