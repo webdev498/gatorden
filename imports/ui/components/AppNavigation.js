@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Navbar } from 'react-bootstrap';
+import { Navbar, Image } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { Meteor } from 'meteor/meteor';
 import PublicNavigation from './PublicNavigation.js';
@@ -14,7 +14,7 @@ const AppNavigation = ({ hasUser }) => (
     <Navbar.Header>
       <Navbar.Brand>
         <Link to="/">
-          <img class="nav-logo" src="/logo.jpg" alt="Logo"/>
+          <Image className="nav-logo" src="/logo.jpg" alt="Logo"/>
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle />
