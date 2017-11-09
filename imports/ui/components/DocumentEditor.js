@@ -42,12 +42,15 @@ export default class DocumentEditor extends React.Component {
         />
       </FormGroup>
       <FormGroup>
+        <Button type="submit" bsStyle="success">
+        { doc && doc._id ? 'Save Changes' : 'Add Room Scheduler' }
+        </Button>
+      </FormGroup>
+      <FormGroup>
         <ControlLabel>Calendar</ControlLabel>
         <GDCalender selectable={true} editable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
       </FormGroup>
-      <Button type="submit" bsStyle="success">
-        { doc && doc._id ? 'Save Changes' : 'Add Room Scheduler' }
-      </Button>
+      
     </form>);
   }
 }
