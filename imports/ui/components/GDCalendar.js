@@ -5,9 +5,10 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import Workdays from '../../api/workdays/workdays';
+import TimePicker from 'react-bootstrap-time-picker';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { OverlayTrigger, Popover, Button } from 'react-bootstrap';
+import { OverlayTrigger, Popover, Button, Modal, FormControl } from 'react-bootstrap';
 
 BigCalendar.momentLocalizer(moment);
 
@@ -19,36 +20,6 @@ const styles = {
         flex: 1
     }
 }
-
-/*
-let tmpEvents = [
-    {
-        'title': 'All Day Event',
-        'allDay': true,
-        'start': new Date(2017, 3, 11),
-        'end': new Date(2017, 10, 10)
-    },
-
-    {
-        'title': 'All Day Event',
-        // 'allDay': true,
-        'start': new Date(2017, 8, 18, 7, 0, 0),
-        'end': new Date(2017, 8, 18, 10, 30, 0)
-    },
-
-    {
-        'title': 'Long Event',
-        'start': new Date(2017, 8, 17, 19, 30, 0),
-        'end': new Date(2017, 8, 17, 22, 0, 0)
-    },
-
-    {
-        'title': 'DTS STARTS',
-        'start': new Date(2017, 8, 20, 19, 30, 0),
-        'end': new Date(2017, 8, 20, 21, 0, 0)
-    },
-]
-*/
 
 let tmpEvents = [];
 let minDate = new Date(2017, 9, 24, 7, 0, 0);
@@ -98,8 +69,8 @@ class MyEvent extends React.Component {
 
         const { event } = this.props;
         return <OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={popoverHoverFocus(event.title, event.start, event.end)}>
-                    <span style={ {display: 'block', width: '100%', height: '100%'} }>
-                        <em style={{ color: 'black'}}>{event.title}</em>
+                    <span style={ {display: 'block', width: '100%', height: '100%', paddingTop: '10px'} }>
+                        <em style={{ color: 'white', fontWeight: 'normal', fontSize: '13pt'}}>{event.title}</em>
                     </span>
                </OverlayTrigger>;
     }
@@ -113,7 +84,8 @@ class GDCalendar extends React.Component {
 
         tmpEvents = this.props.doc && this.props.doc.events ? this.props.doc.events : [];
         this.state = {
-            events : tmpEvents
+            events: tmpEvents,
+            showEventModal: false,
         }
 
         this.moveEvent = this.moveEvent.bind(this);
@@ -160,22 +132,29 @@ class GDCalendar extends React.Component {
     }
 
     onSelectSlot(event) {
+
         if(!this.props.editable) return;
 
-        let deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
+        this.setState({
+            selectedEvent: event
+        });
+        this.openEventEditor();
 
-        if (deleteConfirm == true) {
-            let newEvents = tmpEvents.filter(el => {
-                return el != event;
-            });
 
-            tmpEvents = newEvents;
-            this.setState({
-                events: tmpEvents
-            });
+        // let deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
 
-            this.updateDocumentEvents();
-        }
+        // if (deleteConfirm == true) {
+        //     let newEvents = tmpEvents.filter(el => {
+        //         return el != event;
+        //     });
+
+        //     tmpEvents = newEvents;
+        //     this.setState({
+        //         events: tmpEvents
+        //     });
+
+        //     this.updateDocumentEvents();
+        // }
 
     }
 
@@ -187,30 +166,73 @@ class GDCalendar extends React.Component {
         this.props.changeDoc(newDoc);
     }
 
+    openEventEditor() {
+        this.setState({ showEventModal: true });
+    }
+
+
+    closeEventEditor() {
+        this.setState({ showEventModal: false });
+    }
+
     render() {
         return (
-            <DragAndDropCalendar
-                selectable={this.props.editable && this.props.selectable}
-                events={this.state.events}
-                defaultView='work_week'
-                views={['month', 'work_week']}
-                step={5}
-                min={minDate}
-                max={maxDate}
-                allDayAccessor={'All Day'}
-                // formats={{dayFormat: 'dddd, MMM D, YYYY'}}
-                // scrollToTime={new Date(1970, 1, 1, 6)}
-                onEventDrop={this.moveEvent}
-                onSelectEvent={this.onSelectSlot.bind(this)}
-                onSelectSlot={this.onSelectTimes.bind(this)}
-                style={styles.calendarView}
-                components={{
-                    event: MyEvent,
-                    work_week: {
-                      header: WeekHeader
-                    }
-                }}
-            />
+            <div>
+                <DragAndDropCalendar
+                    selectable={this.props.editable && this.props.selectable}
+                    events={this.state.events}
+                    defaultView='work_week'
+                    views={['month', 'work_week']}
+                    step={5}
+                    min={minDate}
+                    max={maxDate}
+                    allDayAccessor={'All Day'}
+                    // formats={{dayFormat: 'dddd, MMM D, YYYY'}}
+                    // scrollToTime={new Date(1970, 1, 1, 6)}
+                    onEventDrop={this.moveEvent}
+                    onSelectEvent={this.onSelectSlot.bind(this)}
+                    onSelectSlot={this.onSelectTimes.bind(this)}
+                    style={styles.calendarView}
+                    components={{
+                        event: MyEvent,
+                        work_week: {
+                        header: WeekHeader
+                        }
+                    }}
+                />
+
+                <Modal show={this.state.showEventModal} onHide={this.closeEventEditor.bind(this)}>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Event - {this.state.selectedEvent ? this.state.selectedEvent.title : ''}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <h5>Date: { !this.state.selectedEvent ? moment().format('MMM D, YYYY') : moment(this.state.selectedEvent.start).format('MMM D, YYYY')}</h5>
+                    <h5>Current Start Time : { !this.state.selectedEvent ? moment().format('hh:mm A') : moment(this.state.selectedEvent.start).format('hh:mm A') }</h5>
+                    <h5>Current End Time : { !this.state.selectedEvent ? moment().format('hh:mm A') : moment(this.state.selectedEvent.end).format('hh:mm A') }</h5>
+                    <br/>
+                    <p>Start Time: </p>
+                    <TimePicker initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.start).format("hh:mm") } start="7:00" end="22:00" step={5} />
+                    <br/>
+                    <p>End Time: </p>
+                    <TimePicker initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.end).format("hh:mm") } start="7:00" end="22:00" step={5} />
+                    <br/>
+                    <p>Title: </p>
+                    <FormControl
+                        type="text"
+                        value={this.state.selectedEvent ? this.state.selectedEvent.title : ''}
+                        placeholder="Enter title"
+                        // onChange={this.handleChange}
+                    />
+                    
+                    <hr />
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button bsStyle="success" onClick={this.closeEventEditor.bind(this)}>Save</Button>
+                    <Button bsStyle="danger" onClick={this.closeEventEditor.bind(this)}>Delete</Button>
+                    <Button onClick={this.closeEventEditor.bind(this)}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         )
     }
 }

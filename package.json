@@ -79,6 +79,7 @@
     "react-big-calendar": "^0.15.0",
     "react-bootstrap": "^0.30.9",
     "react-bootstrap-table": "^4.0.3",
+    "react-bootstrap-time-picker": "^1.0.3",
     "react-dnd": "^2.5.1",
     "react-dnd-html5-backend": "^2.5.1",
     "react-dom": "^15.5.4",
