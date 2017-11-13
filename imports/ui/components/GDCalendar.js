@@ -173,9 +173,15 @@ class GDCalendar extends React.Component {
             //Check overlap
             const overlapOutput = overlap([...tmpEvents, eventInfo]);
             if (overlapOutput.overlap == true) {
-                Bert.alert('Event time cannot be overlapped.', 'warning');
-                console.log('Overlapped Info', JSON.stringify(overlapOutput));
-                return;
+                var result = _.some(overlapOutput.ranges, function (range) {
+                                return (range.previous === eventInfo) || (range.current === eventInfo);
+                            });
+
+                if (result) {
+                    Bert.alert('Event time cannot be overlapped.', 'warning');
+                    console.log('Overlapped Info', JSON.stringify(overlapOutput));
+                    return;    
+                }
             }
 
             //If not overlap, add the event
@@ -222,9 +228,15 @@ class GDCalendar extends React.Component {
         //Check overlap
         const overlapOutput = overlap(nextEvents);
         if (overlapOutput.overlap == true) {
-            Bert.alert('Event time cannot be overlapped.', 'warning');
-            console.log('Overlapped Info', JSON.stringify(overlapOutput));
-            return false;
+            var result = _.some(overlapOutput.ranges, function (range) {
+                return (range.previous === updatedEvents) || (range.current === updatedEvents);
+            });
+
+            if (result) {
+                Bert.alert('Event time cannot be overlapped.', 'warning');
+                console.log('Overlapped Info', JSON.stringify(overlapOutput));
+                return false;
+            }
         }
 
         this.setState({
