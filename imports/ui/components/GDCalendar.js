@@ -12,8 +12,60 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 
 BigCalendar.momentLocalizer(moment);
-
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
+
+function overlap(dateRanges){
+    var sortedRanges = dateRanges.sort((previous, current) => {
+    
+      // get the start date from previous and current
+      var previousTime = previous.start.getTime();
+      var currentTime = current.start.getTime();
+  
+      // if the previous is earlier than the current
+      if (previousTime < currentTime) {
+        return -1;
+      }
+  
+      // if the previous time is the same as the current time
+      if (previousTime === currentTime) {
+        return 0;
+      }
+  
+      // if the previous time is later than the current time
+      return 1;
+    });
+    
+    var result = sortedRanges.reduce((result, current, idx, arr) => {
+      // get the previous range
+      if (idx === 0) { return result; }
+      var previous = arr[idx-1];
+    
+      // check for any overlap
+      var previousEnd = previous.end.getTime();
+      var currentStart = current.start.getTime();
+      var overlap = (previousEnd > currentStart);
+    
+      // store the result
+      if (overlap) {
+        // yes, there is overlap
+        result.overlap = true;
+        // store the specific ranges that overlap
+        result.ranges.push({
+          previous: previous,
+          current: current
+        })
+      }
+     
+      return result;
+     
+       // seed the reduce  
+    }, {overlap: false, ranges: []});
+  
+  
+    // return the final results  
+    return result;
+  }
+
 
 const styles = {
     calendarView: {
@@ -99,7 +151,10 @@ class GDCalendar extends React.Component {
         //Check if this is editable
         if(!this.props.editable) return;
 
-        this.replaceEventWithInfo({event, start, end});
+        const updateResult = this.replaceEventWithInfo({event, start, end});
+        if (updateResult) {
+            Bert.alert('Successfully changed the event!', 'success');
+        }
     }
 
     onSelectTimes(slotInfo) {
@@ -112,6 +167,18 @@ class GDCalendar extends React.Component {
                 'start': slotInfo.start,
                 'end': slotInfo.end,
             }
+
+            tmpEvents = this.state.events;
+
+            //Check overlap
+            const overlapOutput = overlap([...tmpEvents, eventInfo]);
+            if (overlapOutput.overlap == true) {
+                Bert.alert('Event time cannot be overlapped.', 'warning');
+                console.log('Overlapped Info', JSON.stringify(overlapOutput));
+                return;
+            }
+
+            //If not overlap, add the event
             tmpEvents.push(eventInfo);
             this.setState({
                 events: tmpEvents
@@ -152,9 +219,19 @@ class GDCalendar extends React.Component {
         const nextEvents = [...events];
         nextEvents.splice(idx, 1, updatedEvents);
 
+        //Check overlap
+        const overlapOutput = overlap(nextEvents);
+        if (overlapOutput.overlap == true) {
+            Bert.alert('Event time cannot be overlapped.', 'warning');
+            console.log('Overlapped Info', JSON.stringify(overlapOutput));
+            return false;
+        }
+
         this.setState({
             events: nextEvents
         }, this.updateDocumentEvents);
+
+        return true;
     }
 
     handleStartTimeChange(time) {
@@ -202,10 +279,12 @@ class GDCalendar extends React.Component {
         const end = moment(event.end).set('hour', endHours).set('minute', endMins).toDate();
 
         // event.title = eventTitle;
-        this.replaceEventWithInfo({ event, start, end, eventTitle });
+        const updateResult = this.replaceEventWithInfo({ event, start, end, eventTitle });
 
-        Bert.alert('Successfully changed the event!', 'success');
-        this.closeEventEditor();
+        if (updateResult) {
+            Bert.alert('Successfully changed the event!', 'success');
+            this.closeEventEditor();
+        }
     }
 
     deleteCurrentSelectedEvent() {
@@ -219,6 +298,8 @@ class GDCalendar extends React.Component {
         const deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
 
         if (deleteConfirm == true) {
+            tmpEvents = this.state.events;
+
             let newEvents = tmpEvents.filter(el => {
                 return el != event;
             });
