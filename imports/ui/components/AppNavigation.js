@@ -14,7 +14,7 @@ const AppNavigation = ({ hasUser }) => (
     <Navbar.Header>
       <Navbar.Brand>
         <Link to="/">
-          <Image className="nav-logo" src="/logo.jpg" alt="Logo"/>
+          <Image className="nav-logo" src="/weblogo.jpg" alt="Logo"/>
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle />
