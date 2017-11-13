@@ -14,7 +14,8 @@ const AppNavigation = ({ hasUser }) => (
     <Navbar.Header>
       <Navbar.Brand>
         <Link to="/">
-          <Image className="nav-logo" src="/weblogo.jpg" alt="Logo"/>
+          <Image className="nav-logo" style= {{display: 'inline'}} src="/weblogo.jpg" alt="Logo"/>
+          <h4 style= {{display: 'inline'}}>  RCDS Room Scheduler</h4>
         </Link>
       </Navbar.Brand>
       <Navbar.Toggle />

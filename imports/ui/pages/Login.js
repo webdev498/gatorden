@@ -26,6 +26,11 @@ export default class Login extends React.Component {
         <Row>
           <Col xs={ 12 } sm={ 6 } md={ 4 }>
             <h4 className="page-header">Login</h4>
+            <div className="google-login-button" onClick={this.handleGoogleLogin}>
+              <img src="/google_login_btn.png"></img>
+            </div>
+            <hr/>
+
             <form
               ref={ form => (this.loginForm = form) }
               className="login"
@@ -54,9 +59,7 @@ export default class Login extends React.Component {
               </FormGroup>
               <Button type="submit" bsStyle="success">Login</Button>
             </form>
-            <div className="google-login-button" onClick={this.handleGoogleLogin}>
-              <img src="/google_login_btn.png"></img>
-            </div>
+            
           </Col>
         </Row>
       </div>
