@@ -205,8 +205,6 @@ class GDCalendar extends React.Component {
     }
 
     updateDocumentEvents() {
-        console.log('updateDocumentEvents called**********');
-
         let newDoc = this.props.doc;
         if (!newDoc) newDoc = [];
         newDoc.events = this.state.events;
