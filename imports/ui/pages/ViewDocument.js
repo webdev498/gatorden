@@ -10,6 +10,7 @@ import NotFound from './NotFound';
 import container from '../../modules/container';
 import GDCalender from '../components/GDCalendar';
 import { Roles } from 'meteor/alanning:roles';
+import { eventsUpdate } from '../../modules/document-editor.js';
 
 const handleEdit = (_id) => {
   browserHistory.push(`/documents/${_id}/edit`);
@@ -28,26 +29,41 @@ const handleRemove = (_id) => {
   }
 };
 
-const ViewDocument = ({ doc }) => {
-  return doc ? (
-    <div className="ViewDocument">
-      <div className="page-header clearfix">
-        <h4 className="pull-left">{ doc && doc.title }</h4>
-        {
-          Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin'], Roles.GLOBAL_GROUP) &&
-          <ButtonToolbar className="pull-right">
-            <ButtonGroup bsSize="small">
-              <Button onClick={ () => handleEdit(doc._id) }>Edit</Button>
-              <Button onClick={ () => handleRemove(doc._id) } className="text-danger">Delete</Button>
-            </ButtonGroup>
-          </ButtonToolbar>
-        }
+class ViewDocument extends React.Component {
+  changeDocEvents(newDoc) {
+    this.props.doc = newDoc;
+    eventsUpdate(newDoc);
+  }
+
+  render() {
+    const { doc } = this.props;
+    return doc ? (
+      <div className="ViewDocument">
+        <div className="page-header clearfix">
+          <h4 className="pull-left">{ doc && doc.title }</h4>
+          {
+            Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin'], Roles.GLOBAL_GROUP) &&
+            <ButtonToolbar className="pull-right">
+              <ButtonGroup bsSize="small">
+                <Button onClick={ () => handleEdit(doc._id) }>Edit</Button>
+                <Button onClick={ () => handleRemove(doc._id) } className="text-danger">Delete</Button>
+              </ButtonGroup>
+            </ButtonToolbar>
+          }
+        </div>
+        { doc && doc.body }
+        <br/> <br/>
+        <GDCalender 
+          editable={
+            Roles.userIsInRole(Meteor.userId(), ['admin', 'superadmin'], Roles.GLOBAL_GROUP)
+          } 
+          creatable={true} 
+          doc={doc} 
+          changeDoc={this.changeDocEvents.bind(this)}
+        />
       </div>
-      { doc && doc.body }
-      <br/> <br/>
-      <GDCalender selectable={false} editable={false} doc={doc}/>
-    </div>
-  ) : <NotFound />;
+    ) : <NotFound />;
+  }
 };
 
 ViewDocument.propTypes = {

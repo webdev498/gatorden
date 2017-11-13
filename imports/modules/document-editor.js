@@ -29,14 +29,12 @@ const handleUpsert = () => {
   });
 };
 
-export const eventsUpdate = (events) => {
-  const { doc } = component.props;
-
+export const eventsUpdate = (doc) => {
   const upsert = {
     _id: doc._id,
-    title: document.querySelector('[name="title"]').value.trim(),
-    body: document.querySelector('[name="body"]').value.trim(),
-    events: events,
+    title: doc.title,
+    body: doc.body,
+    events: doc.events,
   };
 
   upsertDocument.call(upsert, (error, response) => {

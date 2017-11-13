@@ -14,7 +14,7 @@ export default class DocumentEditor extends React.Component {
 
   changeDocEvents(newDoc) {
     this.props.doc = newDoc;
-    eventsUpdate(newDoc.events);
+    eventsUpdate(newDoc);
   }
 
   render() {
@@ -46,11 +46,12 @@ export default class DocumentEditor extends React.Component {
         { doc && doc._id ? 'Save Changes' : 'Add Room Scheduler' }
         </Button>
       </FormGroup>
-      { doc && doc._id &&
-        <FormGroup>
-          <ControlLabel>Calendar</ControlLabel>
-          <GDCalender selectable={true} editable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
-        </FormGroup>
+      { 
+        // doc && doc._id &&
+        // <FormGroup>
+        //   <ControlLabel>Calendar</ControlLabel>
+        //   <GDCalender editable={true} creatable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
+        // </FormGroup>
       }
       
     </form>);

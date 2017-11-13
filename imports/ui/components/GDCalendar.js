@@ -103,7 +103,7 @@ class GDCalendar extends React.Component {
     }
 
     onSelectTimes(slotInfo) {
-        if(!this.props.editable) return;
+        if(!this.props.creatable) return;
 
         let eventName = window.prompt('Please enter the event name', 'Event');
         if (eventName != null && eventName != "") {
@@ -115,9 +115,7 @@ class GDCalendar extends React.Component {
             tmpEvents.push(eventInfo);
             this.setState({
                 events: tmpEvents
-            });
-
-            this.updateDocumentEvents();
+            }, this.updateDocumentEvents);
         }
     }
 
@@ -248,7 +246,7 @@ class GDCalendar extends React.Component {
         return (
             <div>
                 <DragAndDropCalendar
-                    selectable={this.props.editable && this.props.selectable}
+                    selectable={this.props.creatable}
                     events={this.state.events}
                     defaultView='work_week'
                     views={['month', 'work_week']}
