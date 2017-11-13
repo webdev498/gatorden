@@ -6,9 +6,10 @@ import moment from 'moment';
 import { Meteor } from 'meteor/meteor';
 import Workdays from '../../api/workdays/workdays';
 import TimePicker from 'react-bootstrap-time-picker';
+import { OverlayTrigger, Popover, Button, Modal, FormControl } from 'react-bootstrap';
+import { Bert } from 'meteor/themeteorchef:bert';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { OverlayTrigger, Popover, Button, Modal, FormControl } from 'react-bootstrap';
 
 BigCalendar.momentLocalizer(moment);
 
@@ -86,30 +87,19 @@ class GDCalendar extends React.Component {
         this.state = {
             events: tmpEvents,
             showEventModal: false,
+            selectedEvent: null,
+            selectedEventStartTime: 0,
+            selectedEventEndTime: 0,
         }
 
         this.moveEvent = this.moveEvent.bind(this);
     }
 
     moveEvent({event, start, end}) {
+        //Check if this is editable
         if(!this.props.editable) return;
 
-        const editable = this.props.editable;
-        if (!editable) return;
-        
-        const { events } = this.state;
-
-        const idx = events.indexOf(event);
-        const updatedEvents = { ...event, start, end };
-
-        const nextEvents = [...events];
-        nextEvents.splice(idx, 1, updatedEvents);
-
-        this.setState({
-            events: nextEvents
-        })
-
-        this.updateDocumentEvents();
+        this.replaceEventWithInfo({event, start, end});
     }
 
     onSelectTimes(slotInfo) {
@@ -136,26 +126,11 @@ class GDCalendar extends React.Component {
         if(!this.props.editable) return;
 
         this.setState({
-            selectedEvent: event
+            selectedEvent: event,
+            selectedEventStartTime: moment(event.start).hours() * 3600 + moment(event.start).minutes() * 60,
+            selectedEventEndTime: moment(event.end).hours() * 3600 + moment(event.end).minutes() * 60,
         });
         this.openEventEditor();
-
-
-        // let deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
-
-        // if (deleteConfirm == true) {
-        //     let newEvents = tmpEvents.filter(el => {
-        //         return el != event;
-        //     });
-
-        //     tmpEvents = newEvents;
-        //     this.setState({
-        //         events: tmpEvents
-        //     });
-
-        //     this.updateDocumentEvents();
-        // }
-
     }
 
     updateDocumentEvents() {
@@ -164,6 +139,100 @@ class GDCalendar extends React.Component {
         newDoc.events = this.state.events;
 
         this.props.changeDoc(newDoc);
+    }
+
+    replaceEventWithInfo({ event, start, end }) {
+        const { events } = this.state;
+        
+        const idx = events.indexOf(event);
+        const updatedEvents = { ...event, start, end };
+
+        const nextEvents = [...events];
+        nextEvents.splice(idx, 1, updatedEvents);
+
+        this.setState({
+            events: nextEvents
+        })
+
+        this.updateDocumentEvents();
+    }
+
+    handleStartTimeChange(time) {
+        this.setState({
+            selectedEventStartTime: time
+        });
+    }
+
+    handleEndTimeChange(time) {
+        this.setState({
+            selectedEventEndTime: time
+        });
+        
+    }
+
+    saveCurrentEvent() {
+        if (!this.state.selectedEvent) {
+            Bert.alert('Event not found', 'danger');
+            this.closeEventEditor();
+            return;
+        }
+
+        const eventTitle = this.eventNewTitleText.value;
+        if (eventTitle.length <= 0) {
+            Bert.alert('The event title should be there', 'warning');
+            this.closeEventEditor();
+            return;
+        }
+
+        const event = this.state.selectedEvent;
+        const startTimeValue = this.state.selectedEventStartTime;
+        const endTimeValue = this.state.selectedEventEndTime;
+
+        if (startTimeValue >= endTimeValue) {
+            Bert.alert('The Start time should be ealier than the End time', 'warning');
+            return;
+        }
+
+        const startHours = Math.floor(startTimeValue / 3600);
+        const startMins = Math.floor((startTimeValue % 3600) / 60);
+        const start = moment(event.start).set('hour', startHours).set('minute', startMins).toDate();
+
+        const endHours = Math.floor(endTimeValue / 3600);
+        const endMins = Math.floor((endTimeValue % 3600) / 60);
+        const end = moment(event.end).set('hour', endHours).set('minute', endMins).toDate();
+
+        event.title = eventTitle;
+        this.replaceEventWithInfo({ event, start, end });
+
+        Bert.alert('Successfully changed the event!', 'success');
+        this.closeEventEditor();
+    }
+
+    deleteCurrentSelectedEvent() {
+        if (!this.state.selectedEvent) {
+            Bert.alert('Delete Event Error', 'danger');
+            this.closeEventEditor();
+            return;
+        }
+
+        const event = this.state.selectedEvent;
+        const deleteConfirm = confirm('Do you want to delete the event \"' + event.title + '\"?');
+
+        if (deleteConfirm == true) {
+            let newEvents = tmpEvents.filter(el => {
+                return el != event;
+            });
+
+            tmpEvents = newEvents;
+            this.setState({
+                events: tmpEvents
+            });
+
+            this.updateDocumentEvents();
+
+            Bert.alert('Successfully deleted the event!', 'success');
+            this.closeEventEditor();
+        }
     }
 
     openEventEditor() {
@@ -176,6 +245,7 @@ class GDCalendar extends React.Component {
     }
 
     render() {
+        console.log('render -------- state :', this.state);
         return (
             <div>
                 <DragAndDropCalendar
@@ -211,24 +281,38 @@ class GDCalendar extends React.Component {
                     <h5>Current End Time : { !this.state.selectedEvent ? moment().format('hh:mm A') : moment(this.state.selectedEvent.end).format('hh:mm A') }</h5>
                     <br/>
                     <p>Start Time: </p>
-                    <TimePicker initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.start).format("hh:mm") } start="7:00" end="22:00" step={5} />
+                    <TimePicker 
+                        initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.start).format("hh:mm") }
+                        start="7:00" 
+                        end="22:00" 
+                        step={5} 
+                        onChange={ this.handleStartTimeChange.bind(this) }
+                        value={ this.state.selectedEventStartTime }
+                    />
                     <br/>
                     <p>End Time: </p>
-                    <TimePicker initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.end).format("hh:mm") } start="7:00" end="22:00" step={5} />
+                    <TimePicker 
+                        initialValue={ !this.state.selectedEvent ? moment().format("hh:mm") : moment(this.state.selectedEvent.end).format("hh:mm") } 
+                        start="7:00" 
+                        end="22:00" 
+                        step={5} 
+                        onChange={ this.handleEndTimeChange.bind(this) } 
+                        value={ this.state.selectedEventEndTime }
+                    />
                     <br/>
                     <p>Title: </p>
                     <FormControl
                         type="text"
-                        value={this.state.selectedEvent ? this.state.selectedEvent.title : ''}
+                        defaultValue={this.state.selectedEvent ? this.state.selectedEvent.title : ''}
                         placeholder="Enter title"
-                        // onChange={this.handleChange}
+                        inputRef={ref => { this.eventNewTitleText = ref; }}
                     />
                     
                     <hr />
                     </Modal.Body>
                     <Modal.Footer>
-                    <Button bsStyle="success" onClick={this.closeEventEditor.bind(this)}>Save</Button>
-                    <Button bsStyle="danger" onClick={this.closeEventEditor.bind(this)}>Delete</Button>
+                    <Button bsStyle="success" onClick={this.saveCurrentEvent.bind(this)}>Save</Button>
+                    <Button bsStyle="danger" onClick={this.deleteCurrentSelectedEvent.bind(this)}>Delete</Button>
                     <Button onClick={this.closeEventEditor.bind(this)}>Close</Button>
                     </Modal.Footer>
                 </Modal>
