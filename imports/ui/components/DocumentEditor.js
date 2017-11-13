@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, ControlLabel, FormControl, Button } from 'react-bootstrap';
-import documentEditor from '../../modules/document-editor.js';
+import { documentEditor, eventsUpdate } from '../../modules/document-editor.js';
 import GDCalender from './GDCalendar';
 
 export default class DocumentEditor extends React.Component {
@@ -14,7 +14,7 @@ export default class DocumentEditor extends React.Component {
 
   changeDocEvents(newDoc) {
     this.props.doc = newDoc;
-    console.log('change doc events : ', this.props.doc);
+    eventsUpdate(newDoc.events);
   }
 
   render() {
@@ -46,10 +46,12 @@ export default class DocumentEditor extends React.Component {
         { doc && doc._id ? 'Save Changes' : 'Add Room Scheduler' }
         </Button>
       </FormGroup>
-      <FormGroup>
-        <ControlLabel>Calendar</ControlLabel>
-        <GDCalender selectable={true} editable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
-      </FormGroup>
+      { doc && doc._id &&
+        <FormGroup>
+          <ControlLabel>Calendar</ControlLabel>
+          <GDCalender selectable={true} editable={true} doc={doc} changeDoc={this.changeDocEvents.bind(this)}/>
+        </FormGroup>
+      }
       
     </form>);
   }

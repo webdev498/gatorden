@@ -134,6 +134,8 @@ class GDCalendar extends React.Component {
     }
 
     updateDocumentEvents() {
+        console.log('updateDocumentEvents called**********');
+
         let newDoc = this.props.doc;
         if (!newDoc) newDoc = [];
         newDoc.events = this.state.events;
@@ -141,10 +143,12 @@ class GDCalendar extends React.Component {
         this.props.changeDoc(newDoc);
     }
 
-    replaceEventWithInfo({ event, start, end }) {
+    replaceEventWithInfo({ event, start, end, eventTitle }) {
         const { events } = this.state;
         
         const idx = events.indexOf(event);
+        if (eventTitle && eventTitle.length) event.title = eventTitle;
+
         const updatedEvents = { ...event, start, end };
 
         const nextEvents = [...events];
@@ -152,9 +156,7 @@ class GDCalendar extends React.Component {
 
         this.setState({
             events: nextEvents
-        })
-
-        this.updateDocumentEvents();
+        }, this.updateDocumentEvents);
     }
 
     handleStartTimeChange(time) {
@@ -201,8 +203,8 @@ class GDCalendar extends React.Component {
         const endMins = Math.floor((endTimeValue % 3600) / 60);
         const end = moment(event.end).set('hour', endHours).set('minute', endMins).toDate();
 
-        event.title = eventTitle;
-        this.replaceEventWithInfo({ event, start, end });
+        // event.title = eventTitle;
+        this.replaceEventWithInfo({ event, start, end, eventTitle });
 
         Bert.alert('Successfully changed the event!', 'success');
         this.closeEventEditor();
@@ -226,9 +228,7 @@ class GDCalendar extends React.Component {
             tmpEvents = newEvents;
             this.setState({
                 events: tmpEvents
-            });
-
-            this.updateDocumentEvents();
+            }, this.updateDocumentEvents);
 
             Bert.alert('Successfully deleted the event!', 'success');
             this.closeEventEditor();
@@ -245,7 +245,6 @@ class GDCalendar extends React.Component {
     }
 
     render() {
-        console.log('render -------- state :', this.state);
         return (
             <div>
                 <DragAndDropCalendar

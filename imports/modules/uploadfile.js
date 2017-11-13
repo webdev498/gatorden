@@ -69,7 +69,6 @@ const upload = () => {
                     if (roomID && eventDateStr && eventStartTimeStr && eventEndTimeStr && eventTitle) {
                         if (docSubscription.ready()) {
                             const myDoc = Documents.findOne({ title: arrayRoomIDMatches[roomID]});
-                            console.log('myDoc:--', myDoc);
                             if (myDoc) {
                                 const eventObj = {};
                                 eventObj['title'] = eventTitle;
@@ -85,10 +84,8 @@ const upload = () => {
                                 const eventsArray = myDoc.events ? myDoc.events : [];
                                 eventsArray.push(eventObj);
                                 uniqEventsArray = _.uniqWith( eventsArray, _.isEqual);
-                                console.log('uniqEventsArray : ', uniqEventsArray);
                                 myDoc.events = uniqEventsArray;
 
-                                console.log('updated Doc:--', myDoc);
                                 upsertDocument.call(myDoc);
                             }
                         }

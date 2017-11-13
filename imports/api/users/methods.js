@@ -8,11 +8,9 @@ export const updateUserWithFieldKeyValue = (userId, key, value) => {
     result = Users.update(userId, 
         { $set: updateObj }
     );
-    console.log('update result: ', result);
 }
 
 export const updateUserWithRole = (userId, role) => {
-    console.log('update user with role:', userId, role);
     Roles.setUserRoles(userId, role, Roles.GLOBAL_GROUP);
 }
 

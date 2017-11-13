@@ -29,6 +29,27 @@ const handleUpsert = () => {
   });
 };
 
+export const eventsUpdate = (events) => {
+  const { doc } = component.props;
+
+  const upsert = {
+    _id: doc._id,
+    title: document.querySelector('[name="title"]').value.trim(),
+    body: document.querySelector('[name="body"]').value.trim(),
+    events: events,
+  };
+
+  upsertDocument.call(upsert, (error, response) => {
+    if (error) {
+      Bert.alert(error.reason, 'danger');
+    } else {
+      console.log('Event updated!!!');
+    }
+  });
+
+
+}
+
 const validate = () => {
   $(component.documentEditorForm).validate({
     rules: {
@@ -51,7 +72,7 @@ const validate = () => {
   });
 };
 
-export default function documentEditor(options) {
+export function documentEditor(options) {
   component = options.component;
   validate();
 }
